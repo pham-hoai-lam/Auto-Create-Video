@@ -8,6 +8,24 @@
 
 ---
 
+<div align="center">
+
+## 🎥 Xem Demo Sản Phẩm / Watch Demo
+
+### 👉 [**▶️ XEM VIDEO DEMO TRÊN YOUTUBE SHORTS**](https://youtube.com/shorts/S24JfKxV4bo) 👈
+
+[![Watch Demo](https://img.shields.io/badge/▶️_Watch_Demo-YouTube_Shorts-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtube.com/shorts/S24JfKxV4bo)
+[![Demo Video](https://img.shields.io/badge/🎬_Live_Demo-Click_to_Watch-00C853?style=for-the-badge)](https://youtube.com/shorts/S24JfKxV4bo)
+
+**🔗 Link trực tiếp / Direct link:** https://youtube.com/shorts/S24JfKxV4bo
+
+*Video được tạo hoàn toàn tự động bằng pipeline này — Vietnamese TTS + HyperFrames + GSAP animations*
+*This video was generated entirely by this pipeline — Vietnamese TTS + HyperFrames + GSAP animations*
+
+</div>
+
+---
+
 # 🇻🇳 Tiếng Việt
 
 ## Giới thiệu
