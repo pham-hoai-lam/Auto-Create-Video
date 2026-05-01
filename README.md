@@ -103,30 +103,30 @@ Either way, after ~3–5 minutes you'll have `output/<slug>/video.mp4` — a 108
 <table>
 <tr>
 <td width="33%" align="center">
-<h3>🎨 6 Smart Templates</h3>
-<sub>Hook, Comparison, Stat-Hero, Feature-List, Callout, Outro — auto-picked by content</sub>
+<h3>🎨 12 Smart Templates</h3>
+<sub>hook · comparison · stat-hero · feature-list · callout · outro · quote-card · icon-grid · timeline · big-text · chart-bars · kinetic-quote</sub>
 </td>
 <td width="33%" align="center">
 <h3>🎤 Multi-TTS</h3>
-<sub>LucyLab (Vietnamese cloning) or ElevenLabs (30+ languages)</sub>
+<sub>LucyLab (Vietnamese cloning + free SRT) or ElevenLabs (30+ languages)</sub>
 </td>
 <td width="33%" align="center">
 <h3>🤖 Claude Code Skill</h3>
-<sub>One slash command:<br/><code>/create-news-video &lt;url&gt;</code></sub>
+<sub>One slash command:<br/><code>/create-news-video &lt;url&gt;</code><br/>(URL / .txt / .md input)</sub>
 </td>
 </tr>
 <tr>
 <td width="33%" align="center">
 <h3>🎬 HeyGen-Quality Look</h3>
-<sub>Studio shell + grain texture + GSAP animations + navy gradient</sub>
+<sub>Studio shell + grain texture + GSAP animations + 6 theme palettes (tech-blue, growth-green, finance-gold, warning-red, creator-purple, news-mono)</sub>
 </td>
 <td width="33%" align="center">
 <h3>🔊 Auto SFX Mixing</h3>
-<sub>3-tier smart picker: explicit override → semantic match → template default</sub>
+<sub>3-tier smart picker (override → semantic match → template default) with anti-repetition + anti-overlap guards</sub>
 </td>
 <td width="33%" align="center">
 <h3>🧪 Production Ready</h3>
-<sub>44 unit tests, Zod schema validation, full TypeScript ESM</sub>
+<sub>44 unit tests, Zod schema validation, full TypeScript ESM, GitHub Actions CI</sub>
 </td>
 </tr>
 <tr>
@@ -136,11 +136,25 @@ Either way, after ~3–5 minutes you'll have `output/<slug>/video.mp4` — a 108
 </td>
 <td width="33%" align="center">
 <h3>♻️ Idempotent TTS</h3>
-<sub>Skips re-synthesis if voice files exist — saves API quota</sub>
+<sub>Skips re-synthesis if voice files exist — saves API quota across re-renders</sub>
+</td>
+<td width="33%" align="center">
+<h3>🖼️ Auto Thumbnail</h3>
+<sub>Gemini 2.5 Flash Image generates a 9:16 cover, embedded into MP4 (no re-encode)</sub>
+</td>
+</tr>
+<tr>
+<td width="33%" align="center">
+<h3>🎯 Voice-Text Sync</h3>
+<sub><code>voiceChunks</code> per scene → beats fire EXACTLY when voice mentions each element</sub>
+</td>
+<td width="33%" align="center">
+<h3>✅ Quality Gates</h3>
+<sub>Pre-render <code>lint</code> + <code>validate</code> (WCAG contrast) + <code>inspect</code> (text overflow / off-canvas)</sub>
 </td>
 <td width="33%" align="center">
 <h3>📝 CapCut-Friendly</h3>
-<sub>Exports <code>script.txt</code> + <code>voice.mp3</code> for auto-caption workflow</sub>
+<sub>Exports <code>script.txt</code> + <code>voice.mp3</code> + <code>sns_post.txt</code> for auto-caption + social caption</sub>
 </td>
 </tr>
 </table>
@@ -151,25 +165,24 @@ Either way, after ~3–5 minutes you'll have `output/<slug>/video.mp4` — a 108
 
 ```mermaid
 flowchart LR
-    A[📰 Article URL or .txt] -->|/create-news-video| B[Claude Code]
+    A[📰 URL / .txt / .md] -->|/create-news-video| B[Claude Code]
     B -->|fetch + analyze| C[Generate script.json]
     C -->|Zod validate| D{Template Picker}
-    D -->|hook| E[6 Scene Types]
-    D -->|comparison| E
-    D -->|stat-hero| E
-    D -->|feature-list| E
-    D -->|callout| E
-    D -->|outro| E
-    E -->|TTS per scene| F[LucyLab / ElevenLabs]
-    F -->|voice.mp3 + SFX mix| G[HyperFrames]
+    D -->|12 variants| E[Scene Types]
+    E -->|TTS per scene<br/>or per chunk| F[LucyLab / ElevenLabs]
+    F -->|voice.mp3<br/>+ SFX mix<br/>+ beat SFX| G[HyperFrames]
+    G -.->|lint<br/>validate<br/>inspect| G
     G -->|Puppeteer + GSAP| H[1800 frames @ 30fps]
-    H -->|FFmpeg encode| I[🎬 video.mp4 1080×1920]
+    H -->|FFmpeg encode| I[video.mp4 1080×1920]
+    I -->|attach cover| J[Gemini Thumbnail]
+    J -->|🎬 video.mp4 + thumbnail.png| K[Done]
 
     style A fill:#0f172a,color:#fff
-    style I fill:#10b981,color:#fff
+    style K fill:#10b981,color:#fff
     style B fill:#6366f1,color:#fff
     style F fill:#f59e0b,color:#fff
     style G fill:#ec4899,color:#fff
+    style J fill:#8b5cf6,color:#fff
 ```
 
 The pipeline is **AI for content** (Claude writes the script) and **deterministic code for production** (Node/TS/FFmpeg renders the pixels) — same input → identical frames every time.
@@ -180,16 +193,20 @@ The pipeline is **AI for content** (Claude writes the script) and **deterministi
 
 | Layer | Technology |
 |---|---|
-| **Runtime** | Node.js ≥ 22, TypeScript 5+, ESM |
-| **Render engine** | [HyperFrames](https://hyperframes.heygen.com) (Puppeteer + GSAP + FFmpeg) |
-| **TTS providers** | [LucyLab.io](https://lucylab.io) (JSON-RPC, Vietnamese cloning) or [ElevenLabs](https://elevenlabs.io) (REST, multilingual) |
-| **Schema validation** | [Zod](https://zod.dev) discriminated unions |
-| **HTTP** | axios + nock (test mocking) |
-| **Testing** | [Vitest](https://vitest.dev) — ESM-native |
-| **Audio processing** | FFmpeg + ffprobe (mix, concat, probe) |
+| **Runtime** | Node.js ≥ 22, TypeScript 6+, ESM |
+| **Render engine** | [HyperFrames](https://hyperframes.heygen.com) ^0.4.34 (Puppeteer + GSAP + FFmpeg) |
+| **Quality gates** | `hyperframes lint` (errors block) → `validate` (WCAG contrast) → `inspect` (text overflow / off-canvas) — all run before render |
+| **TTS providers** | [LucyLab.io](https://lucylab.io) (JSON-RPC async, Vietnamese cloning) or [ElevenLabs](https://elevenlabs.io) (REST sync, multilingual) |
+| **Image generation** | [Gemini 2.5 Flash Image](https://aistudio.google.com) — 9:16 thumbnails, embedded as MP4 cover |
+| **Schema validation** | [Zod](https://zod.dev) ^4 discriminated unions (12 template variants) |
+| **HTTP** | axios ^1.15 + nock (test mocking) |
+| **Concurrency** | [p-limit](https://github.com/sindresorhus/p-limit) ^7 (TTS rate-limiting per provider) |
+| **Testing** | [Vitest](https://vitest.dev) ^4 — ESM-native, with @vitest/coverage-v8 |
+| **Audio processing** | FFmpeg + ffprobe (mix, concat with silence, attach cover image) |
 | **AI orchestration** | [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) skill (`/create-news-video`) |
 | **Visual blocks** | HyperFrames registry: `grain-overlay`, `shimmer-sweep`, `tiktok-follow` |
-| **Fonts** | Inter + Anton (Google Fonts) |
+| **Brand spec** | See [`design.md`](design.md) — palette, layout density, motion principles |
+| **Fonts** | Manrope (body) + Anton (display) + Lora (italic serif for quotes) — Google Fonts |
 
 ---
 
@@ -268,13 +285,30 @@ ELEVENLABS_MODEL_ID=eleven_multilingual_v2
 ### TikTok follow card (optional, all defaults work)
 
 ```env
-TIKTOK_DISPLAY_NAME=Công nghệ 24h
-TIKTOK_HANDLE=@congnghe24h
-TIKTOK_FOLLOWERS=1.2M followers
+TIKTOK_DISPLAY_NAME=Quẹp Làm IT
+TIKTOK_HANDLE=@haiquep
+TIKTOK_FOLLOWERS=11.5k followers
 TIKTOK_AVATAR_URL=https://example.com/your-avatar.jpg   # optional
 ```
 
 To customise the avatar, either replace `assets/avatar.png` with your own square ≥256×256 image, **or** set `TIKTOK_AVATAR_URL` so the pipeline downloads it on every render.
+
+### Option 3 — Gemini thumbnail (optional, gracefully skipped if absent)
+
+If set, the pipeline generates a 9:16 thumbnail per video and embeds it as the MP4 cover image — Windows Explorer / Finder / TikTok / YouTube uploaders show it before any frame plays. Without a key, the step is silently skipped (video still renders).
+
+```env
+GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
+GEMINI_IMAGE_MODEL=gemini-2.5-flash-image    # default; ~7s per call
+```
+
+🔗 Get a free key: https://aistudio.google.com/apikey
+
+### Pipeline tuning (optional)
+
+```env
+TTS_CONCURRENCY=1    # 1 for LucyLab (API limit). Increase for ElevenLabs parallelism.
+```
 
 ---
 
@@ -324,52 +358,106 @@ npm run rerender -- output/<slug>-<timestamp>
 
 ```
 output/<slug>-<timestamp>/
-├── script.json           # Input JSON (Claude-generated or hand-written)
-├── script.txt            # Plain text for CapCut auto-caption
-├── images/bg.jpg         # og:image (if URL had one)
+├── script.json                # Input JSON (Claude-generated or hand-written)
+├── script.txt                 # Plain text for CapCut auto-caption
+├── sns_post.txt               # Vietnamese caption for TikTok / Reels (skill-generated)
+├── images/bg.jpg              # og:image (if URL had one)
 ├── voice/
-│   ├── scene-hook.mp3    # TTS per scene (idempotent — skipped if exists)
-│   ├── scene-hook.srt    # SRT subtitles (LucyLab only)
-│   └── scene-body-1.mp3
-├── voice-raw.mp3         # Concatenated voices, no SFX (intermediate)
-├── voice.mp3             # Final audio with SFX mixed in (for CapCut)
-├── tiktok-avatar.png     # Copy of bundled avatar
-├── logo.svg              # Copy of bundled logo
-├── index.html            # HyperFrames composition
-├── styles.css            # Template CSS (self-contained)
-├── animations.js         # GSAP timeline (self-contained)
-├── hyperframes.json      # HyperFrames manifest
-├── meta.json             # HyperFrames metadata
-└── video.mp4             # 🎉 Final output — 1080×1920 @ 30fps
+│   ├── scene-hook.mp3         # TTS per scene (idempotent — skipped if exists)
+│   ├── scene-hook.srt         # SRT subtitles (LucyLab only)
+│   ├── scene-body-1.mp3
+│   ├── scene-body-1-chunk-0.mp3   # voiceChunks: per-element TTS files
+│   └── scene-body-1-chunk-1.mp3   # used to compute sync-accurate beat timings
+├── voice-raw.mp3              # Concatenated voices, no SFX (intermediate)
+├── voice.mp3                  # Final audio with SFX + beat SFX mixed in (for CapCut)
+├── tiktok-avatar.png          # Copy of bundled avatar (or downloaded from URL)
+├── logo.svg                   # Copy of bundled logo
+├── index.html                 # HyperFrames composition
+├── styles.css                 # Template CSS (self-contained)
+├── animations.js              # GSAP timeline (self-contained)
+├── hyperframes.json           # HyperFrames manifest
+├── meta.json                  # HyperFrames metadata
+├── thumbnail.png              # Gemini-generated 9:16 cover (if GEMINI_API_KEY set)
+└── video.mp4                  # 🎉 Final output — 1080×1920 @ 30fps + embedded cover
 ```
 
 ---
 
 ## 🎨 Visual System
 
-Every video has a **persistent shell** throughout (header brand icon + channel + tag, footer TikTok handle, grain texture, navy gradient with cyan + purple accents) plus 5–8 scenes auto-picked by Claude:
+Every video has a **persistent shell** throughout (header brand icon + channel + tag, footer TikTok handle, grain texture, gradient background) plus 4–18 scenes auto-picked by Claude. The base palette is **cream editorial (light)** for consistent brand identity; the `theme` field on `script.metadata` switches the accent colour:
+
+| Theme | When to use |
+|---|---|
+| `tech-blue` *(default)* | AI, code, dev tools, software |
+| `growth-green` | Marketing, SaaS, customer growth |
+| `finance-gold` | Money, pricing, ROI, fundraising |
+| `warning-red` | Risk, controversy, failure stories |
+| `creator-purple` | Founder stories, design, art, indie |
+| `news-mono` | Serious news, journalism, reports |
+
+### 12 templates (auto-picked by content)
+
+**v1 — core 6:**
 
 | Template | When it's picked | Example |
 |---|---|---|
-| `hook` | First scene (3–5s) | "GPT 5.5" + "AI mạnh nhất!" over og:image with shimmer |
+| `hook` | First scene (3–5s) | "GPT 5.5" + "AI mạnh nhất!" over og:image with Ken Burns + shimmer |
 | `comparison` | Content has "X vs Y" / "exceeds" / "compared to" | 2 cards: "GPT 5.4 75.1%" cyan vs "GPT 5.5 82.7%" purple (winner) |
 | `stat-hero` | Key number / % | "1M" giant gradient + "Tokens / context window" |
-| `feature-list` | Listing features | Card with up to 4 bullets, cyan glow dots |
-| `callout` | Statement / warning / quote | Purple glow card with "Cảnh báo: AI tự chủ cần cân nhắc" |
+| `feature-list` | Listing features | Card with up to 4 bullets, accent glow dots |
+| `callout` | Statement / warning / quote | Glow card with "Cảnh báo: AI tự chủ cần cân nhắc" |
 | `outro` | Last scene (3–5s) | "Theo dõi ngay" pill + channel name + gradient underline |
+
+**v3 — composition expansion:**
+
+| Template | When it's picked | Example |
+|---|---|---|
+| `quote-card` | Pull quote / contemplative statement | Italic Lora serif, attribution line below |
+| `icon-grid` | 3–6 features / capabilities | Emoji-style icon + label cells, staggered reveal |
+| `timeline` | Multi-stage progression | When/label rows, slide-right cascade |
+
+**v3.1 — dramatic impact:**
+
+| Template | When it's picked | Example |
+|---|---|---|
+| `big-text` | Single dramatic word/phrase | Massive Anton display, optional `hideShell` for full-bleed |
+| `chart-bars` | 2–5 quantitative bars | Heights normalised to 100%, slide-up reveal with ding |
+| `kinetic-quote` | 3–12-word kinetic typography | Words reveal sequentially, accent on highlighted word |
+
+### Per-scene timing & motion
+
+- **Beats** — up to 12 keyed animations per scene (8 effects: `bounce-in`, `scale-pop`, `slide-up/-left/-right`, `fade-in`, `glow-pulse`, `shake`). Defaults derived from template, override via `scene.beats`, or use `voiceChunks` for sync-accurate timing.
+- **`voiceChunks`** — split voice into 2–8 sentences with `target` element + optional `effect` + `sfx`. Pipeline TTS each chunk separately, measures actual durations, fires beats EXACTLY when voice mentions each element. Eliminates the "visuals leak ahead of voice" problem.
+- **Transitions** — 8 types (`cut`, `fade`, `slide-up/-down/-left/-right`, `scale-out`, `blur`). Defaults per from→to scene-type pair (e.g. `hook→body`=fade 0.4s, `body→outro`=scale-out 0.5s); override via `scene.transition`.
 
 ### Sound Effects (auto-mixed by template)
 
-| Template | Default SFX | When you hear it |
+| Template | Default category (fallback) | When you hear it |
 |---|---|---|
-| `hook` | `transition/whoosh-soft` | Dramatic intro |
-| `comparison` | `transition/swoosh` | When the 2 cards appear |
-| `stat-hero` | `emphasis/ding` | When the number reveals |
-| `feature-list` | `transition/pop` | Each bullet appears |
-| `callout` | `alert/notification` | Important statement |
-| `outro` | `outro/tada` | Ending signature |
+| `hook` | `transition` → `cinematic` | Dramatic intro |
+| `comparison` | `transition` → `emphasis` | When the 2 cards appear |
+| `stat-hero` | `emphasis` → `success` | When the number reveals |
+| `feature-list` | `transition` → `emphasis` | Each bullet appears |
+| `callout` | `alert` → `drumroll` | Important statement / warning |
+| `outro` | `outro` → `success` | Ending signature |
+| `quote-card` | `cinematic` → `drumroll` | Contemplative pull quote |
+| `icon-grid` | `transition` → `emphasis` | Multi-element reveal |
+| `timeline` | `countdown` → `emphasis` | Stage progression |
+| `big-text` | `cinematic` → `success` | Dramatic impact |
+| `chart-bars` | `emphasis` → `success` | Bar reveal cascade |
+| `kinetic-quote` | `cinematic` → `drumroll` | Typographic reveal |
 
-The 3-tier SFX picker (in `src/assets/sfx-selector.ts`) chooses in this order: **explicit `scene.sfx`** override → **semantic match** on Vietnamese keywords (e.g. `cảnh báo`→alert, `kỷ lục`→success) → **template default**. Within a category, files are picked deterministically by hashing the scene id, so the same script always produces the same SFX.
+The 3-tier SFX picker (in [`src/assets/sfx-selector.ts`](src/assets/sfx-selector.ts)) chooses in this order:
+
+1. **Explicit `scene.sfx`** override (`"none"` disables SFX for that scene)
+2. **Semantic match** on `voiceText` keywords (Vietnamese + English) — e.g. `cảnh báo|warning|risk` → `alert`, `kỷ lục|record|breakthrough` → `success`, `ra mắt|launch|reveal` → `reveal`, `thất bại|fail|crash` → `fail`
+3. **Template default** category (with fallback chain)
+
+Within a category, files are picked **deterministically** by hashing the scene id (same script → same SFX, but different scenes get different files). Two extra protections run in the mixer:
+
+- **Anti-repetition**: a sliding window of the last 2 scenes prevents the same SFX file twice in a row.
+- **Anti-overlap guard**: per-element beat SFX firing within ±0.4s of a scene's main SFX is suppressed (no "tick + ding clash" at scene boundaries). Repeated beat SFX across consecutive scenes get their volume ducked 35%.
 
 ---
 
@@ -469,7 +557,7 @@ The Claude Code skill handles this automatically when generating scripts. See [`
 <details>
 <summary><b>Can I customise the visual style (colors, fonts)?</b></summary>
 
-Yes — edit [`src/render/templates/styles.css`](src/render/templates/styles.css). The template system uses CSS variables so changes propagate to all 6 scene types. Animation timing lives in [`src/render/templates/animations.js`](src/render/templates/animations.js).
+Yes — edit [`src/render/templates/styles.css`](src/render/templates/styles.css). The template system uses CSS variables (theme accent + base palette) so changes propagate across all 12 scene types and all 6 themes. Animation timing lives in [`src/render/templates/animations.js`](src/render/templates/animations.js). Brand spec rationale is in [`design.md`](design.md).
 </details>
 
 <details>
@@ -508,7 +596,7 @@ npm run test:watch       # watch mode
 npx tsc --noEmit         # type-check without build
 ```
 
-Tests cover Zod schema validation, TTS clients (with `nock` HTTP mocking — no real API calls), audio tools (with fixture mp3 sine waves), beat profiles, timing computation, transition profiles, and HTML composer snapshots.
+Tests cover Zod schema validation (12 templates), TTS clients for both LucyLab + ElevenLabs (with `nock` HTTP mocking — no real API calls), audio tools (with fixture mp3 sine waves), beat profiles + chunk-derived beats, timing computation, transition profiles, SFX selector (3-tier + anti-repetition), Gemini thumbnail prompt builder, and HTML composer snapshots. CI runs on every push (see badges at top).
 
 ---
 
@@ -520,20 +608,24 @@ Tests cover Zod schema validation, TTS clients (with `nock` HTTP mocking — no 
 | `hyperframes render failed` | Run `npx hyperframes render --help` to verify CLI; ensure Chrome can be downloaded by Puppeteer |
 | `LucyLab polling timeout` | Increase `LUCYLAB_POLL_TIMEOUT_MS` in `.env.local` (default 120000ms) |
 | `ElevenLabs 401 Invalid API key` | Verify the key on the ElevenLabs dashboard, re-paste into `.env.local` |
-| `Total duration outside [48s, 72s]` | Either re-trigger the skill or hand-edit `script.json` to lengthen / shorten text |
+| `Total duration outside [45, 180]s` | Pipeline only **warns** — re-trigger the skill or hand-edit `script.json` to lengthen / shorten text. Heuristic in [`SKILL.md`](.claude/skills/create-news-video/SKILL.md). |
 | `ffprobe: command not found` | Install FFmpeg (see [Configuration](#-configuration)) |
+| `Thumbnail skipped: GEMINI_API_KEY not set` | Optional step. Add a key in `.env.local` (free at https://aistudio.google.com/apikey) or ignore — video still renders fine. |
+| `hyperframes lint failed` | Quality gate caught a composition error. Read the message and fix `index.html` / `animations.js` in the output dir, then re-run `rerender`. |
 
 ---
 
 ## 🗺️ Roadmap
 
+- [x] ~~Auto thumbnail generation (cover image)~~ — shipped via Gemini 2.5 Flash Image
+- [x] ~~Voice-text sync per element~~ — shipped via `voiceChunks`
+- [x] ~~Quality gates before render~~ — shipped via hyperframes lint/validate/inspect
 - [ ] Burned-in captions (forced alignment with Whisper)
 - [ ] Auto-select background music by mood
 - [ ] Multi-news compilation mode (`digest`)
-- [ ] AI-generated images (Flux / Stable Diffusion when og:image unavailable)
+- [ ] AI-generated background images for hook scene (Gemini / Flux when og:image unavailable)
 - [ ] Auto-upload to TikTok / YouTube Shorts / Reels via API
-- [ ] Custom logo overlay with positioning controls
-- [ ] Multi-language script generation (English, Chinese)
+- [ ] Multi-language script generation (English, Chinese, Japanese)
 - [ ] Standalone web UI (no Claude Code required)
 
 Have a feature request? [Open an issue](https://github.com/hoquanghai/Auto-Create-Video/issues/new).
