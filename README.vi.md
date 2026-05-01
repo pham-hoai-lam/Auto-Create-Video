@@ -1,3 +1,5 @@
+<a id="top"></a>
+
 <div align="center">
 
 <img src="./assets/logo.svg" alt="Auto News Video" width="120" />
@@ -13,7 +15,8 @@
 [![License](https://img.shields.io/github/license/hoquanghai/Auto-Create-Video?style=for-the-badge&color=green)](LICENSE)
 [![Node](https://img.shields.io/badge/node-22%2B-brightgreen?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/typescript-5%2B-blue?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Tests](https://img.shields.io/badge/tests-35_passing-success?style=for-the-badge&logo=vitest&logoColor=white)]()
+[![Tests](https://github.com/hoquanghai/Auto-Create-Video/actions/workflows/test.yml/badge.svg?style=for-the-badge)](https://github.com/hoquanghai/Auto-Create-Video/actions/workflows/test.yml)
+[![Typecheck](https://github.com/hoquanghai/Auto-Create-Video/actions/workflows/typecheck.yml/badge.svg?style=for-the-badge)](https://github.com/hoquanghai/Auto-Create-Video/actions/workflows/typecheck.yml)
 
 [**🇬🇧 English**](README.md) · [**🇻🇳 Tiếng Việt**](README.vi.md) · [**📺 Xem Demo**](https://youtube.com/shorts/S24JfKxV4bo) · [**🚀 Bắt Đầu Nhanh**](#-bắt-đầu-nhanh) · [**❓ FAQ**](#-faq)
 
@@ -62,19 +65,34 @@ Việc tạo video tin tức ngắn rất **tốn thời gian và lặp đi lặ
 ## 🚀 Bắt Đầu Nhanh
 
 ```bash
+# 1. Clone & cài dependencies
 git clone https://github.com/hoquanghai/Auto-Create-Video.git
 cd Auto-Create-Video
 npm install
-cp .env.example .env.local        # rồi mở .env.local điền API key
+
+# 2. Cấu hình TTS API key
+cp .env.example .env.local
+# → mở .env.local, set TTS_PROVIDER + key (LucyLab hoặc ElevenLabs)
 ```
 
-Mở project trong [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) và gõ:
+Sau đó chọn 1 trong 2 cách:
 
-```
-/create-news-video https://vnexpress.net/some-article
+**Cách A — Có Claude Code (khuyến nghị, setup 30 giây):**
+
+1. Cài Claude Code: `npm install -g @anthropic-ai/claude-code`
+2. Trong thư mục project, chạy `claude`, rồi gõ:
+   ```
+   /create-news-video https://vnexpress.net/some-article
+   ```
+
+**Cách B — Không có Claude Code (tự viết script):**
+
+```bash
+# Edit script.json thủ công theo src/render/script-schema.ts
+npm run pipeline -- output/my-video/script.json
 ```
 
-Xong. Sau ~3–5 phút bạn sẽ có `output/<slug>/video.mp4` — file 1080×1920 sẵn sàng cho TikTok / Shorts / Reels.
+Cả 2 cách: sau ~3–5 phút bạn sẽ có `output/<slug>/video.mp4` — file 1080×1920 sẵn sàng cho TikTok / Shorts / Reels.
 
 > 💡 **Cần chi tiết?** Xem [Cài đặt đầy đủ](#-cài-đặt-đầy-đủ) · [Cấu hình](#-cấu-hình) · [Sử dụng](#-sử-dụng)
 
@@ -108,7 +126,7 @@ Xong. Sau ~3–5 phút bạn sẽ có `output/<slug>/video.mp4` — file 1080×1
 </td>
 <td width="33%" align="center">
 <h3>🧪 Production Ready</h3>
-<sub>35 unit tests, Zod schema validation, full TypeScript ESM</sub>
+<sub>44 unit tests, Zod schema validation, full TypeScript ESM</sub>
 </td>
 </tr>
 <tr>
@@ -259,7 +277,7 @@ cp .env.example .env.local
 node --version       # ≥ 22
 ffmpeg -version      # in version OK
 ffprobe -version
-npm test             # all 35 tests should pass
+npm test             # all 44 tests should pass
 ```
 
 ### Cài FFmpeg
@@ -464,9 +482,15 @@ Có — dùng **Cách 2** (`npm run pipeline -- script.json`) với `script.json
 <details>
 <summary><b>Sao không chọn Remotion mà lại chọn HyperFrames?</b></summary>
 
-HyperFrames purpose-built cho short-form (9:16 native), 50+ pre-built blocks cho social media, AI-agent friendly hơn (Claude tự sinh HTML). Remotion mạnh cho composition phức tạp nhưng đòi hỏi React expertise — migrate 6 templates hiện tại sẽ tốn 2–3 tuần mà không lợi ích thực tế.
+HyperFrames được purpose-built cho short-form video — 9:16 native, 50+ blocks social media (TikTok cards, kinetic typography, data viz), AI-agent friendly (Claude có thể tự sinh HTML composition mà không cần React boilerplate).
 
-Về kiến trúc, vẫn mượn idea từ Remotion: frame-deterministic timeline, declarative scene timing ([`src/render/timing.ts`](src/render/timing.ts)), built-in transitions ([`src/render/transition-profiles.ts`](src/render/transition-profiles.ts)).
+Remotion là tool tuyệt vời với scope rộng hơn — long-form content, composition phức tạp, full React ecosystem. Tool khác nhau cho job khác nhau.
+
+Bọn mình vẫn mượn các ý tưởng tốt từ design của Remotion:
+
+- Frame-deterministic timeline
+- Declarative scene timing ([`src/render/timing.ts`](src/render/timing.ts))
+- Hệ thống transitions built-in ([`src/render/transition-profiles.ts`](src/render/transition-profiles.ts))
 </details>
 
 <details>
@@ -533,7 +557,7 @@ Pipeline support **45–180 giây**. Heuristic trong [`SKILL.md`](.claude/skills
 ## 🧪 Testing
 
 ```bash
-npm test                 # 35 unit tests (~4s)
+npm test                 # 44 unit tests (~6s)
 npm run test:watch       # watch mode
 npx tsc --noEmit         # type-check không build
 ```
@@ -628,7 +652,7 @@ Nếu dự án giúp bạn tiết kiệm thời gian, hãy:
 
 <div align="center">
 
-**[⬆ Lên đầu trang](#-auto-news-video)**
+**[⬆ Lên đầu trang](#top)**
 
 Made with ❤️ by [Ho Quang Hai](https://github.com/hoquanghai) tại 🇻🇳 Vietnam
 

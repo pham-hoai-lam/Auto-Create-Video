@@ -1,3 +1,5 @@
+<a id="top"></a>
+
 <div align="center">
 
 <img src="./assets/logo.svg" alt="Auto News Video" width="120" />
@@ -13,7 +15,8 @@
 [![License](https://img.shields.io/github/license/hoquanghai/Auto-Create-Video?style=for-the-badge&color=green)](LICENSE)
 [![Node](https://img.shields.io/badge/node-22%2B-brightgreen?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/typescript-5%2B-blue?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Tests](https://img.shields.io/badge/tests-35_passing-success?style=for-the-badge&logo=vitest&logoColor=white)]()
+[![Tests](https://github.com/hoquanghai/Auto-Create-Video/actions/workflows/test.yml/badge.svg?style=for-the-badge)](https://github.com/hoquanghai/Auto-Create-Video/actions/workflows/test.yml)
+[![Typecheck](https://github.com/hoquanghai/Auto-Create-Video/actions/workflows/typecheck.yml/badge.svg?style=for-the-badge)](https://github.com/hoquanghai/Auto-Create-Video/actions/workflows/typecheck.yml)
 
 [**🇬🇧 English**](README.md) · [**🇻🇳 Tiếng Việt**](README.vi.md) · [**📺 Watch Demo**](https://youtube.com/shorts/S24JfKxV4bo) · [**🚀 Quick Start**](#-quick-start) · [**❓ FAQ**](#-faq)
 
@@ -62,19 +65,34 @@ Creating short-form news videos is **time-consuming and repetitive**:
 ## 🚀 Quick Start
 
 ```bash
+# 1. Clone & install
 git clone https://github.com/hoquanghai/Auto-Create-Video.git
 cd Auto-Create-Video
 npm install
-cp .env.example .env.local        # then edit .env.local with your API key
+
+# 2. Configure TTS API key
+cp .env.example .env.local
+# → edit .env.local, set TTS_PROVIDER + key (LucyLab or ElevenLabs)
 ```
 
-Open the project in [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) and run:
+Then choose your path:
 
-```
-/create-news-video https://vnexpress.net/some-article
+**Path A — With Claude Code (recommended, 30 seconds setup):**
+
+1. Install Claude Code: `npm install -g @anthropic-ai/claude-code`
+2. Inside the project directory, run `claude`, then type:
+   ```
+   /create-news-video https://vnexpress.net/some-article
+   ```
+
+**Path B — Without Claude Code (hand-write the script):**
+
+```bash
+# Edit script.json manually based on src/render/script-schema.ts
+npm run pipeline -- output/my-video/script.json
 ```
 
-That's it. After ~3–5 minutes you'll have `output/<slug>/video.mp4` — a 1080×1920 MP4 ready for TikTok / Shorts / Reels.
+Either way, after ~3–5 minutes you'll have `output/<slug>/video.mp4` — a 1080×1920 MP4 ready for TikTok / Shorts / Reels.
 
 > 💡 **Need details?** Jump to [Full Setup](#-full-setup) · [Configuration](#-configuration) · [Usage](#-usage)
 
@@ -108,7 +126,7 @@ That's it. After ~3–5 minutes you'll have `output/<slug>/video.mp4` — a 1080
 </td>
 <td width="33%" align="center">
 <h3>🧪 Production Ready</h3>
-<sub>35 unit tests, Zod schema validation, full TypeScript ESM</sub>
+<sub>44 unit tests, Zod schema validation, full TypeScript ESM</sub>
 </td>
 </tr>
 <tr>
@@ -205,7 +223,7 @@ cp .env.example .env.local
 node --version       # ≥ 22
 ffmpeg -version      # any version OK
 ffprobe -version
-npm test             # 35 tests should pass
+npm test             # 44 tests should pass
 ```
 
 ### Install FFmpeg
@@ -410,9 +428,15 @@ Yes — use **Method 2** (`npm run pipeline -- script.json`) with a hand-written
 <details>
 <summary><b>Why HyperFrames instead of Remotion?</b></summary>
 
-HyperFrames is purpose-built for short-form video (9:16 native), has 50+ pre-built blocks for social media, and is more AI-agent friendly (Claude can author HTML directly). Remotion is more powerful for complex compositions but requires React expertise — and migrating our 6 templates would be a 2–3 week rewrite for no real win.
+HyperFrames is purpose-built for short-form video — 9:16 native, 50+ social media blocks (TikTok cards, kinetic typography, data viz), and AI-agent friendly (Claude can author HTML compositions directly without React boilerplate).
 
-Architecture-wise we still borrow ideas from Remotion: frame-deterministic timeline, declarative scene timing ([`src/render/timing.ts`](src/render/timing.ts)), built-in transitions ([`src/render/transition-profiles.ts`](src/render/transition-profiles.ts)).
+Remotion is a fantastic tool with broader scope — long-form content, complex compositions, full React ecosystem. Different tools for different jobs.
+
+We still borrow good ideas from Remotion's design:
+
+- Frame-deterministic timeline
+- Declarative scene timing ([`src/render/timing.ts`](src/render/timing.ts))
+- Built-in transition system ([`src/render/transition-profiles.ts`](src/render/transition-profiles.ts))
 </details>
 
 <details>
@@ -479,7 +503,7 @@ The pipeline supports **45–180 seconds**. Heuristic in [`SKILL.md`](.claude/sk
 ## 🧪 Testing
 
 ```bash
-npm test                 # 35 unit tests (~4s)
+npm test                 # 44 unit tests (~6s)
 npm run test:watch       # watch mode
 npx tsc --noEmit         # type-check without build
 ```
@@ -574,7 +598,7 @@ If this project saved you time, please consider:
 
 <div align="center">
 
-**[⬆ Back to top](#-auto-news-video)**
+**[⬆ Back to top](#top)**
 
 Made with ❤️ by [Ho Quang Hai](https://github.com/hoquanghai) in 🇻🇳 Vietnam
 
