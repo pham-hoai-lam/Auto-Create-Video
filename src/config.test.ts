@@ -12,6 +12,11 @@ const ENV_KEYS = [
   "ELEVENLABS_VOICE_ID",
   "ELEVENLABS_MODEL_ID",
   "ELEVENLABS_ENDPOINT",
+  "EDGE_TTS_VOICE",
+  "EDGE_TTS_RATE",
+  "EDGE_TTS_VOLUME",
+  "EDGE_TTS_PITCH",
+  "EDGE_TTS_PYTHON",
   "TTS_CONCURRENCY",
 ];
 
@@ -82,6 +87,34 @@ describe("loadConfig", () => {
       process.env.ELEVENLABS_MODEL_ID = "eleven_turbo_v2_5";
       const cfg = loadConfig();
       expect(cfg.elevenlabsModelId).toBe("eleven_turbo_v2_5");
+    });
+  });
+
+  describe("Edge TTS provider", () => {
+    it("uses free Edge TTS defaults when TTS_PROVIDER=edge", () => {
+      process.env.TTS_PROVIDER = "edge";
+      const cfg = loadConfig();
+      expect(cfg.ttsProvider).toBe("edge");
+      expect(cfg.edgeVoice).toBe("vi-VN-HoaiMyNeural");
+      expect(cfg.edgeRate).toBe("+0%");
+      expect(cfg.edgeVolume).toBe("+0%");
+      expect(cfg.edgePitch).toBe("+0Hz");
+      expect(cfg.edgePythonCommand).toBe("python");
+    });
+
+    it("respects Edge TTS overrides", () => {
+      process.env.TTS_PROVIDER = "edge";
+      process.env.EDGE_TTS_VOICE = "vi-VN-NamMinhNeural";
+      process.env.EDGE_TTS_RATE = "-5%";
+      process.env.EDGE_TTS_VOLUME = "+10%";
+      process.env.EDGE_TTS_PITCH = "-2Hz";
+      process.env.EDGE_TTS_PYTHON = "py";
+      const cfg = loadConfig();
+      expect(cfg.edgeVoice).toBe("vi-VN-NamMinhNeural");
+      expect(cfg.edgeRate).toBe("-5%");
+      expect(cfg.edgeVolume).toBe("+10%");
+      expect(cfg.edgePitch).toBe("-2Hz");
+      expect(cfg.edgePythonCommand).toBe("py");
     });
   });
 

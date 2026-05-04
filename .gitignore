@@ -5,6 +5,7 @@ output/
 .env
 *.log
 .DS_Store
+.idea/
 
 # One-off debug scripts
 debug-lucylab.ts

@@ -1,7 +1,7 @@
 /**
  * Common TTS client interface.
  *
- * All providers (LucyLab, ElevenLabs) implement this so the pipeline
+ * All providers (LucyLab, ElevenLabs, Edge TTS) implement this so the pipeline
  * can swap providers without changing orchestration logic.
  */
 export interface TtsClient {
@@ -16,6 +16,7 @@ export interface TtsClient {
 import type { Config } from "../config.js";
 import { LucylabClient } from "./lucylab-client.js";
 import { ElevenLabsClient } from "./elevenlabs-client.js";
+import { EdgeTtsClient } from "./edge-client.js";
 
 export function createTtsClient(cfg: Config): TtsClient {
   switch (cfg.ttsProvider) {
@@ -33,6 +34,14 @@ export function createTtsClient(cfg: Config): TtsClient {
         voiceId: cfg.elevenlabsVoiceId!,
         modelId: cfg.elevenlabsModelId,
         endpoint: cfg.elevenlabsEndpoint,
+      });
+    case "edge":
+      return new EdgeTtsClient({
+        voice: cfg.edgeVoice,
+        rate: cfg.edgeRate,
+        volume: cfg.edgeVolume,
+        pitch: cfg.edgePitch,
+        pythonCommand: cfg.edgePythonCommand,
       });
     default: {
       const _never: never = cfg.ttsProvider;
