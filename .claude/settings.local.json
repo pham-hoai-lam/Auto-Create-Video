@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.24h.com.vn)",
+      "Bash(npm run *)",
+      "Bash(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 \"output/toi-5-5-gia-vang-tang-nhanh-20260505-2100/video.mp4\")"
+    ]
+  }
+}
